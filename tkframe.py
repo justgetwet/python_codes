@@ -95,7 +95,7 @@ class TkFrame:
 if __name__ == '__main__':
 
   lst = [[1,2,3], [4,5,6]]
-  col = ["one", "tow", "tree"]
+  col = ["one", "two", "three"]
   df = pd.DataFrame(lst, columns=col)
 
   t = TkFrame(df)
