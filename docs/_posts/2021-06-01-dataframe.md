@@ -122,6 +122,8 @@ d_html = df.to_html()
 HTML(d_html)
 ```
 
+### 3. DataFrameとjson
+
 - jsonへ変換
 
 ```python
