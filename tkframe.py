@@ -32,7 +32,7 @@ class TkFrame:
     canvas.config(scrollregion=(0, 0, 0, barregion_y)) # スクロール範囲を設定
     canvas.pack(fill=tk.BOTH, expand=True) # tk.BOTH：縦横両方向に対して引き伸ばす
     # Canvasの上にFrameを載せる
-    self.Frame = tk.Frame(canvas, bd=5)
+    self.Frame = tk.Frame(canvas, bd=5) # bd=width: boarder style
     canvas.create_window((0,0), window=self.Frame, anchor=tk.NW)
     
   def treetable(self):
@@ -43,8 +43,8 @@ class TkFrame:
       return [e for e in s.map('Treeview', query_opt=option) if e[:2] != ('!disabled', '!selected')]
     
     s.theme_use("clam")
-    s.configure("Treeview.Heading", background=self.headingcolor)
-    s.map('Treeview', foreground=fixed_map('foreground'), background=fixed_map('background'))
+    s.configure("Treeview.Heading", bg=self.headingcolor)
+    s.map('Treeview', fg=fixed_map('foreground'), bg=fixed_map('background'))
     
     tree["show"] = "headings"
     cols = tuple(range(1, len(self.df.columns)+1))
