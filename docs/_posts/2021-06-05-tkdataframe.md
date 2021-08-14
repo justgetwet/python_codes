@@ -1,0 +1,96 @@
+---
+layout: post
+title: "tkintr + dataframe"
+---
+
+### 1. tkk.treeview
+
+```python
+import tkinter as tk
+from tkinter import ttk
+import pandas as pd
+import seaborn as sns
+import unicodedata
+
+def main():
+	pass
+
+def set_table(frame):
+  
+  iris = sns.load_dataset('iris')
+  df = iris.head(6)
+  headingcolor = "lightgrey"
+  alternatecolor = "whitesmoke"
+
+  tree = ttk.Treeview(frame, height=len(df)+1)
+
+  def fixed_map(option):
+    # Fix for setting text colour for Tkinter 8.6.9
+    # From: https://core.tcl.tk/tk/info/509cafafae
+    #
+    # Returns the style map for 'option' with any styles starting with
+    # ('!disabled', '!selected', ...) filtered out.
+    #
+    # style.map() returns an empty list for missing options, so this
+    # should be future-safe.
+    return [elm for elm in style.map('Treeview', query_opt=option) if elm[:2] != ('!disabled', '!selected')]	
+  
+  style = ttk.Style()
+  style.theme_use("default")
+  style.configure("Treeview.Heading", background=headingcolor)
+  style.map('Treeview', foreground=fixed_map('foreground'), background=fixed_map('background'))
+  
+  tree["show"] = "headings"
+  cols = tuple(range(1, len(df.columns)+1))
+  tree['columns'] = cols
+
+  sizes = column_sizes(df)
+  for i, col, size in zip(cols, df.columns, sizes):
+    tree.heading(i, text=f"{col}")
+    tree.column(i, width=size+8) # 
+  
+  lst = [tuple(t)[1:] for t in df.itertuples()]
+  for i, tpl in enumerate(lst):
+    tree.insert("", "end", tags=i, values=tpl)
+    if i & 1:
+      tree.tag_configure(i, background=alternatecolor)
+  
+  tree.pack(pady=10, padx=10)
+
+def column_sizes(df: pd.DataFrame) -> list:
+
+  def ea_width_count(text):
+    count = 0
+    for c in text:
+      if unicodedata.east_asian_width(c) in 'FWA':
+        count += 2
+      else:
+        count += 1
+    return count * 8
+  
+  lst_columns = [[col] + list(df[col]) for col in df.columns]
+  col_sizes = []
+  for cols in lst_columns:
+    col_sizes.append(max([ea_width_count(str(e)) for e in cols]))
+
+  return col_sizes
+
+```
+
+usage
+
+```python
+def main():
+	# 略
+
+  f_main = tk.Frame(root, height=200, width=500, pady=10, padx=10)
+  set_table(f_main)
+  f_main.pack(fill=tk.BOTH)
+  
+  root.mainloop()
+
+```
+
+run!
+
+![tk]({{site.baseurl}}/assets/images/tk_sample2.png)
