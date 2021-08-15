@@ -7,10 +7,19 @@ import unicodedata
 def main():
   root = tk.Tk()
   root.title("tk sample")
-  table_title = "this is title."
+
   root.geometry("500x250")
 
-  f_toolbar = tk.Frame(root, bg="whitesmoke", height=50, width=500, pady=10, padx=10)
+  frame1(root)
+  
+  root.mainloop()
+
+def frame1(root):
+
+  Frame = tk.Frame(root)
+
+  table_title = "this is title."
+  f_toolbar = tk.Frame(Frame, bg="whitesmoke", height=50, width=500, pady=10, padx=10)
   f_toolbar.pack(fill=tk.X)
   
   l_title = tk.Label(f_toolbar, text=table_title, bg="whitesmoke", anchor="w")
@@ -19,11 +28,11 @@ def main():
   b_quit = ttk.Button(f_toolbar, text='Quit', command=lambda: root.quit())
   b_quit.pack(side=tk.LEFT, expand=True, anchor=tk.E)
 
-  f_main = tk.Frame(root, height=200, width=500, pady=10, padx=10)
-  # set_table(f_main)
+  f_main = tk.Frame(Frame, height=200, width=500, pady=10, padx=10)
+  set_table(f_main)
   f_main.pack(fill=tk.BOTH)
-  
-  root.mainloop()
+
+  Frame.pack()
 
 def set_table(frame):
   
@@ -38,22 +47,19 @@ def set_table(frame):
     # Fix for setting text colour for Tkinter 8.6.9
     # From: https://core.tcl.tk/tk/info/509cafafae
     #
-    # Returns the style map for 'option' with any styles starting with
-    # ('!disabled', '!selected', ...) filtered out.
-    #
-    # style.map() returns an empty list for missing options, so this
-    # should be future-safe.
+    # From: https://ja.stackoverflow.com/questions/64095/
+    # Python ttk.Treeview python3.7でリストに割り当てたtagに対して色を設定する方法
     return [elm for elm in style.map('Treeview', query_opt=option) if elm[:2] != ('!disabled', '!selected')]	
   
   style = ttk.Style()
   style.theme_use("default")
   style.configure("Treeview.Heading", background=headingcolor)
   style.map('Treeview', foreground=fixed_map('foreground'), background=fixed_map('background'))
-  # s.map('Treeview', foreground=fixed_map('foreground'), background=fixed_map('background'))
   
   tree["show"] = "headings"
   cols = tuple(range(1, len(df.columns)+1))
   tree['columns'] = cols
+
   sizes = column_sizes(df)
   for i, col, size in zip(cols, df.columns, sizes):
     tree.heading(i, text=f"{col}")
@@ -80,8 +86,8 @@ def column_sizes(df: pd.DataFrame) -> list:
   
   lst_columns = [[col] + list(df[col]) for col in df.columns]
   col_sizes = []
-  for lst in lst_columns:
-    col_sizes.append(max([ea_width_count(str(e)) for e in lst]))
+  for cols in lst_columns:
+    col_sizes.append(max([ea_width_count(str(e)) for e in cols]))
 
   return col_sizes
 
